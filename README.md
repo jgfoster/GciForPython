@@ -1,2 +1,2 @@
 # gciForPython
-Python wrapper for the GemStone library
+Python wrapper for the GemStone C library
