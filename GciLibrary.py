@@ -6,27 +6,27 @@
 True
 
 >>> gci.version()
-'3.4.1 build gss64_3_4_x_branch-43410'
+'3.4.3 build gss64_3_4_x_branch-45183'
 
 >>> try:
-...     gci.login(netldi='netldi44', stone='gs64stone4')
+...     gci.login(netldi='gs64ldi99', stone='gs64stone4')
 ... except GciException as ex:
 ...     ex.number()     # invalid NetLDI
 4147
 
 >>> try:
-...     gci.login(netldi='netldi4', stone='gs64stone44')
+...     gci.login(netldi='gs64ldi', stone='gs64stone44')
 ... except GciException as ex:
 ...     ex.number()     # invalid stone
 4065
 
 >>> try:
-...     gci.login(netldi='netldi4', stone='gs64stone4', gs_user='fred')
+...     gci.login(netldi='gs64ldi', stone='gs64stone', gs_user='fred')
 ... except GciException as ex:
 ...     ex.number()     # invalid user/password
 4051
 
->>> session = gci.login(netldi='netldi4', stone='gs64stone4')
+>>> session = gci.login(netldi='gs64ldi', stone='gs64stone')
 >>> isinstance(session, int)      # successful login
 True
 
@@ -101,8 +101,8 @@ class GciException(Exception):
 
 class GciLibrary:
 
-    def __init__(self, version='3.4.1', directory=''):
-        path = directory + 'libgcits-' + version + '-64.dylib'
+    def __init__(self, version='3.4.3', directory=''):
+        path = directory + 'libgcits-' + version + '-32.dll'
         self.library = CDLL(path)
 
         self.gciTsLogin = self.library.GciTsLogin
