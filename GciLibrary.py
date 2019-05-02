@@ -8,6 +8,15 @@ True
 >>> gci.version()
 '3.4.3 build gss64_3_4_x_branch-45183'
 
+>>> gci.oopToChar(16668)
+65
+
+>>> gci.oopToChar(16667)
+-1
+
+"""
+
+"""
 >>> try:
 ...     gci.login(netldi='gs64ldi99', stone='gs64stone4')
 ... except GciException as ex:
@@ -131,6 +140,15 @@ class GciLibrary:
         self.gciTsVersion.restype = c_int
         self.gciTsVersion.argtypes = [c_char_p, c_size_t]
 
+        self.gciTsOopToChar = self.library.GciTsOopToChar
+        self.gciTsOopToChar.restype = c_int
+        self.gciTsOopToChar.argtypes = [OopType]
+
+    def oopToChar(self, oop) -> OopType:
+        result = self.gciTsOopToChar(oop)
+        # should check for -1
+        return result
+    
     def is_session_valid(self, session) -> bool:
         return self.gciTsSessionIsRemote(session) == 1
 
