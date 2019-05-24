@@ -14,6 +14,32 @@ True
 >>> gci.oopToChar(16667)
 -1
 
+>>> gci.oopToChar(24860)  # $a
+97
+
+>>> gci.charToOop(65)
+16668
+
+>>> gci.charToOop(97) # $a
+24860
+
+>>> gci.charToOop(1114111)
+285212444
+
+>>> gci.charToOop(1114112)
+1
+
+>>> gci.doubleToSmallDouble(1.0)
+9151314442816847878
+
+>>> gci.doubleToSmallDouble(1e40)
+1
+
+>>> gci.I32ToOop(0)
+2
+
+>>> gci.I32ToOop(55)
+442
 """
 
 """
@@ -144,7 +170,41 @@ class GciLibrary:
         self.gciTsOopToChar.restype = c_int
         self.gciTsOopToChar.argtypes = [OopType]
 
-    def oopToChar(self, oop) -> OopType:
+        self.gciTsCharToOop = self.library.GciTsCharToOop
+        self.gciTsCharToOop.restype = OopType
+        self.gciTsCharToOop.argtypes = [c_uint]
+
+        self.gciTsDoubleToSmallDouble = self.library.GciTsDoubleToSmallDouble
+        self.gciTsDoubleToSmallDouble.restype = OopType
+        self.gciTsDoubleToSmallDouble.argtypes = [c_double]
+
+        self.gciI32ToOop = self.library.GciI32ToOop
+        self.gciI32ToOop.restype = c_int32
+        self.gciI32ToOop.argtypes = [OopType]
+
+        self.gciTsOopIsSpecial = self.library.GciTsOopIsSpecial
+        self.gciTsOopIsSpecial.restype = c_bool
+        self.gciTsOopIsSpecial.argtypes = [OopType]
+
+    def oopIsSpecial(self, oop) -> c_bool:
+        result = self.gciTsOopIsSpecial(oop)
+        return result
+
+    def I32ToOop(self, arg) -> c_int32:
+        result = self.gciI32ToOop(arg)
+        return result
+
+    def doubleToSmallDouble(self, aFloat) -> c_double:
+        result = self.gciTsDoubleToSmallDouble(aFloat)
+        # should check for 1 (OOP_ILLEGAL)
+        return result
+
+    def charToOop(self, ch) -> OopType:
+        result = self.gciTsCharToOop(ch)
+        # should check for 1 (OOP_ILLEGAL)
+        return result
+    
+    def oopToChar(self, oop) -> c_int:
         result = self.gciTsOopToChar(oop)
         # should check for -1
         return result
