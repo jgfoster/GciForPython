@@ -81,63 +81,30 @@ False
 
 """
 
-from ctypes import *
-from typing import Type
-
-GciSession: Type[c_void_p] = c_void_p
-OopType: Type[c_longlong] = c_int64
-
-GCI_ERR_STR_SIZE = 1024
-GCI_ERR_reasonSize = GCI_ERR_STR_SIZE
-GCI_MAX_ERR_ARGS = 10
-
-
-class GciErrSType(Structure):
-    """
-    see $GEMSTONE/include/gci.ht
-    """
-
-    _fields_ = [
-        ('category',        OopType),   # error dictionary
-        ('context',         OopType),   # a GsProcess
-        ('exceptionObj',    OopType),   # an AbstractException or nil
-        ('args',            OopType * GCI_MAX_ERR_ARGS),    # arguments
-        ('number',          c_int),     # GemStone error number
-        ('argCount',        c_int),     # num of arg in the args[]
-        ('fatal',           c_ubyte),   # nonzero if err is fatal
-        ('message',         c_char * (GCI_ERR_STR_SIZE + 1)),      # null-terminated Utf8
-        ('reason',          c_char * (GCI_ERR_reasonSize + 1))     # null-terminated Utf8
-    ]
-
-    def __repr__(self):
-        return 'aGciErrSType'
-
-    def __str__(self):
-        return 'GciErrSType(category=' + hex(self.category) +   \
-               ', context=' + hex(self.context) +               \
-               ', exceptionObj=' + hex(self.exceptionObj) +     \
-               ', args=' + str(list(map(hex, self.args))[0:self.argCount]) +     \
-               ', number=' + str(self.number) +                 \
-               ', argCount=' + str(self.argCount) +             \
-               ', fatal=' + str(self.fatal) +                   \
-               ', message=' + str(self.message) +               \
-               ', reason=' + str(self.reason) + ')'
-
-
-class GciException(Exception):
-
-    def __init__(self, ex: GciErrSType):
-        super().__init__(str(ex.message))
-        self.ex = ex
-
-    def number(self):
-        return self.ex.number
-
+import platform
+from GciClasses import *
 
 class GciLibrary:
 
     def __init__(self, version='3.4.3', directory=''):
-        path = directory + 'libgcits-' + version + '-32.dll'
+        system = platform.system()            # 'Darwin', 'Linux', or 'Windows'
+        size = sizeof(c_voidp)                  # 4 (32-bit) or 8 (64-bit)
+        print(system, size, flush=True)
+        suffixes = {
+            4: {
+                'Darwin': '-32.dynlib',
+                'Linux': '-32.so',
+                'Windows': '-32.dll'
+            },
+            8: {
+                'Darwin': '-64.dynlib',
+                'Linux': '-64.so',
+                'Windows': '-64.dll'
+            }
+        }
+        suffix = suffixes.get(size, 'Invalid size').get(system, 'Invalid system')
+        path = directory + 'libgcits-' + version + suffix
+        print(suffix, path, flush=True)
         self.library = CDLL(path)
 
         self.gciTsLogin = self.library.GciTsLogin
