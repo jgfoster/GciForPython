@@ -103,5 +103,6 @@ venv.bak/
 # mypy
 .mypy_cache/
 .idea
+*.dll
 *.dylib
 GciLogin.py

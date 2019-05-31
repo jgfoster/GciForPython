@@ -14,7 +14,11 @@ class GciLibrary:
         self.gciI32ToOop = self.library.GciI32ToOop
         self.gciI32ToOop.restype = c_int32
         self.gciI32ToOop.argtypes = [OopType]
-
+        
+        self.gciTsAbort = self.library.GciTsAbort
+        self.gciTsAbort.restype = c_bool
+        self.gciTsAbort.argtypes = [GciSession, POINTER(GciErrSType)]
+        
         self.gciTsCharToOop = self.library.GciTsCharToOop
         self.gciTsCharToOop.restype = OopType
         self.gciTsCharToOop.argtypes = [c_uint]
@@ -48,7 +52,7 @@ class GciLibrary:
         self.gciTsOopToChar = self.library.GciTsOopToChar
         self.gciTsOopToChar.restype = c_int
         self.gciTsOopToChar.argtypes = [OopType]
-
+        
         self.gciTsSessionIsRemote = self.library.GciTsSessionIsRemote
         self.gciTsSessionIsRemote.restype = c_int
         self.gciTsSessionIsRemote.argtypes = [GciSession]
@@ -76,6 +80,12 @@ class GciLibrary:
         path = os.path.join(directory, 'libgcits-' + version + '-' + suffix)
         self.library = CDLL(path)
 
+    def abort(self, session) -> None:
+        error = GciErrSType()
+        if not self.gciTsAbort(session, byref(error)):
+            raise GciException(error)
+        return None
+
     def charToOop(self, ch) -> OopType:
         result = self.gciTsCharToOop(ch)
         # should check for 1 (OOP_ILLEGAL)
@@ -83,7 +93,8 @@ class GciLibrary:
     
     def doubleToSmallDouble(self, aFloat) -> c_double:
         result = self.gciTsDoubleToSmallDouble(aFloat)
-        # should check for 1 (OOP_ILLEGAL)
+        if result == OOP_ILLEGAL:
+            raise InvalidArgumentError()
         return result
 
     def I32ToOop(self, arg) -> c_int32:
