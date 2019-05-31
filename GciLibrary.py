@@ -29,20 +29,26 @@ True
 >>> gci.charToOop(1114112)
 1
 
->>> gci.doubleToSmallDouble(1.0)
+>>> try:
+...     gci.doubleToSmallDouble(1.0)
+... except InvalidArgumentError:
+...     "InvalidArgumentError"
 9151314442816847878
 
->>> gci.doubleToSmallDouble(1e40)
-1
+>>> try:
+...     gci.doubleToSmallDouble(1e40)
+... except InvalidArgumentError:
+...     "InvalidArgumentError"
+'InvalidArgumentError'
 
 >>> gci.I32ToOop(0)
 2
 
 >>> gci.I32ToOop(55)
 442
-"""
 
-"""
+
+
 >>> try:
 ...     gci.login(netldi='gs64ldi99', stone='gs64stone4')
 ... except GciException as ex:
@@ -68,7 +74,15 @@ True
 >>> gci.is_session_valid(session)
 True
 
->>> gci.logout(session)
+>>> try:
+...     gci.abort(session)
+... except GciException as ex:
+...     ex.number()
+
+>>> try:
+...     gci.logout(session)
+... except GciException as ex:
+...     ex.number()     # invalid session
 
 >>> gci.is_session_valid(session)
 False
@@ -79,6 +93,11 @@ False
 ...     ex.number()     # invalid session
 4100
 
+>>> try:
+...     gci.abort(session)
+... except GciException as ex:
+...     ex.number()
+4100
 """
 
 from ctypes import *
@@ -90,7 +109,7 @@ OopType: Type[c_longlong] = c_int64
 GCI_ERR_STR_SIZE = 1024
 GCI_ERR_reasonSize = GCI_ERR_STR_SIZE
 GCI_MAX_ERR_ARGS = 10
-
+OOP_ILLEGAL = 1
 
 class GciErrSType(Structure):
     """
@@ -123,8 +142,15 @@ class GciErrSType(Structure):
                ', message=' + str(self.message) +               \
                ', reason=' + str(self.reason) + ')'
 
+class Error(Exception):
+    """Base class for other exceptions"""
+    pass
 
-class GciException(Exception):
+class InvalidArgumentError(Error):
+    """Invalid argument for GCI function"""
+    pass
+
+class GciException(Error):
 
     def __init__(self, ex: GciErrSType):
         super().__init__(str(ex.message))
@@ -186,6 +212,16 @@ class GciLibrary:
         self.gciTsOopIsSpecial.restype = c_bool
         self.gciTsOopIsSpecial.argtypes = [OopType]
 
+        self.gciTsAbort = self.library.GciTsAbort
+        self.gciTsAbort.restype = c_bool
+        self.gciTsAbort.argtypes = [GciSession, POINTER(GciErrSType)]
+
+    def abort(self, session) -> None:
+        error = GciErrSType()
+        if not self.gciTsAbort(session, byref(error)):
+            raise GciException(error)
+        return None
+
     def oopIsSpecial(self, oop) -> c_bool:
         result = self.gciTsOopIsSpecial(oop)
         return result
@@ -196,7 +232,8 @@ class GciLibrary:
 
     def doubleToSmallDouble(self, aFloat) -> c_double:
         result = self.gciTsDoubleToSmallDouble(aFloat)
-        # should check for 1 (OOP_ILLEGAL)
+        if result == OOP_ILLEGAL:
+            raise InvalidArgumentError()
         return result
 
     def charToOop(self, ch) -> OopType:
