@@ -11,7 +11,7 @@ OopType: Type[c_longlong] = c_int64
 GCI_ERR_STR_SIZE = 1024
 GCI_ERR_reasonSize = GCI_ERR_STR_SIZE
 GCI_MAX_ERR_ARGS = 10
-
+OOP_ILLEGAL = 1
 
 class GciErrSType(Structure):
     """
@@ -45,7 +45,15 @@ class GciErrSType(Structure):
                ', reason=' + str(self.reason) + ')'
 
 
-class GciException(Exception):
+class Error(Exception):
+    """Base class for other exceptions"""
+    pass
+
+class InvalidArgumentError(Error):
+    """Invalid argument for GCI function"""
+    pass
+
+class GciException(Error):
 
     def __init__(self, ex: GciErrSType):
         super().__init__(str(ex.message))

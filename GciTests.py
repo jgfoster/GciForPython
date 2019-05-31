@@ -29,11 +29,17 @@ True
 >>> gci.charToOop(1114112)
 1
 
->>> gci.doubleToSmallDouble(1.0)
+>>> try:
+...     gci.doubleToSmallDouble(1.0)
+... except InvalidArgumentError:
+...     "InvalidArgumentError"
 9151314442816847878
 
->>> gci.doubleToSmallDouble(1e40)
-1
+>>> try:
+...     gci.doubleToSmallDouble(1e40)
+... except InvalidArgumentError:
+...     "InvalidArgumentError"
+'InvalidArgumentError'
 
 >>> gci.I32ToOop(0)
 2
@@ -66,7 +72,15 @@ True
 >>> gci.is_session_valid(session)
 True
 
->>> gci.logout(session)
+>>> try:
+...     gci.abort(session)
+... except GciException as ex:
+...     ex.number()
+
+>>> try:
+...     gci.logout(session)
+... except GciException as ex:
+...     ex.number()     # invalid session
 
 >>> gci.is_session_valid(session)
 False
@@ -77,6 +91,12 @@ False
 ...     ex.number()     # invalid session
 4100
 
+>>> try:
+...     gci.abort(session)
+... except GciException as ex:
+...     ex.number()
+4100
+
 """
 
 if __name__ == '__main__':
@@ -84,7 +104,7 @@ if __name__ == '__main__':
     if (not os.path.isfile('GciLogin.py')):
         import shutil
         shutil.copy2('GciDefault.py', 'GciLogin.py')
-    from GciLibrary import GciLibrary, GciException
+    from GciLibrary import GciLibrary, GciException, InvalidArgumentError
     from GciLogin import *
     import doctest
     print('Start tests')
