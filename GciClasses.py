@@ -1,5 +1,5 @@
 """
-
+Definitions of basic classes and types for the GCI Library
 """
 
 from ctypes import *
