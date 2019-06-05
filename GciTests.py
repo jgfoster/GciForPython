@@ -48,24 +48,24 @@ True
 442
 
 >>> try:
-...     gci.login(netldi='badldi', stone='badstone')
+...     gci.login(gem_host=gem_host, netldi='badldi', stone='badstone')
 ... except GciException as ex:
 ...     ex.number()     # invalid NetLDI
 4147
 
 >>> try:
-...     gci.login(netldi=netldi, stone='badstone')
+...     gci.login(gem_host=gem_host, netldi=netldi, stone='badstone')
 ... except GciException as ex:
 ...     ex.number()     # invalid stone
 4065
 
 >>> try:
-...     gci.login(netldi=netldi, stone=stone, gs_user='badUser')
+...     gci.login(gem_host=gem_host, netldi=netldi, stone=stone, gs_user='badUser')
 ... except GciException as ex:
 ...     ex.number()     # invalid user/password
 4051
 
->>> session = gci.login(netldi=netldi, stone=stone, gs_user=gs_user, gs_password=gs_password)
+>>> session = gci.login(gem_host=gem_host, netldi=netldi, stone=stone, gs_user=gs_user, gs_password=gs_password)
 >>> isinstance(session, int)      # successful login
 True
 
