@@ -78,6 +78,16 @@ True
 ...     ex.number()
 
 >>> try:
+...     gci.begin(session)
+... except GciException as ex:
+...     ex.number()
+
+>>> try:
+...     gci.commit(session)
+... except GciException as ex:
+...     ex.number()
+
+>>> try:
 ...     gci.logout(session)
 ... except GciException as ex:
 ...     ex.number()     # invalid session
@@ -93,6 +103,18 @@ False
 
 >>> try:
 ...     gci.abort(session)
+... except GciException as ex:
+...     ex.number()
+4100
+
+>>> try:
+...     gci.begin(session)
+... except GciException as ex:
+...     ex.number()
+4100
+
+>>> try:
+...     gci.commit(session)
 ... except GciException as ex:
 ...     ex.number()
 4100
