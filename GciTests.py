@@ -78,6 +78,12 @@ True
 ...     ex.number()
 
 >>> try:
+...     oop = gci.resolveSymbol(session, '$@&#**')
+... except GciException as ex:
+...     ex.number()
+7878
+
+>>> try:
 ...     gci.logout(session)
 ... except GciException as ex:
 ...     ex.number()     # invalid session
