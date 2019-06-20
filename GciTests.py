@@ -48,24 +48,24 @@ True
 442
 
 >>> try:
-...     gci.login(netldi='badldi', stone='badstone')
+...     gci.login(gem_host=gem_host, netldi='badldi', stone='badstone')
 ... except GciException as ex:
 ...     ex.number()     # invalid NetLDI
 4147
 
 >>> try:
-...     gci.login(netldi=netldi, stone='badstone')
+...     gci.login(gem_host=gem_host, netldi=netldi, stone='badstone')
 ... except GciException as ex:
 ...     ex.number()     # invalid stone
 4065
 
 >>> try:
-...     gci.login(netldi=netldi, stone=stone, gs_user='badUser')
+...     gci.login(gem_host=gem_host, netldi=netldi, stone=stone, gs_user='badUser')
 ... except GciException as ex:
 ...     ex.number()     # invalid user/password
 4051
 
->>> session = gci.login(netldi=netldi, stone=stone, gs_user=gs_user, gs_password=gs_password)
+>>> session = gci.login(gem_host=gem_host, netldi=netldi, stone=stone, gs_user=gs_user, gs_password=gs_password)
 >>> isinstance(session, int)      # successful login
 True
 
@@ -78,10 +78,14 @@ True
 ...     ex.number()
 
 >>> try:
-...     oop = gci.resolveSymbol(session, '$@&#**')
+...     gci.begin(session)
 ... except GciException as ex:
 ...     ex.number()
-7878
+
+>>> try:
+...     gci.commit(session)
+... except GciException as ex:
+...     ex.number()
 
 >>> try:
 ...     gci.logout(session)
@@ -99,6 +103,18 @@ False
 
 >>> try:
 ...     gci.abort(session)
+... except GciException as ex:
+...     ex.number()
+4100
+
+>>> try:
+...     gci.begin(session)
+... except GciException as ex:
+...     ex.number()
+4100
+
+>>> try:
+...     gci.commit(session)
 ... except GciException as ex:
 ...     ex.number()
 4100

@@ -23,7 +23,7 @@ In addition to this README.md and the C header file (used for reference only) th
 
 To add new function wrappers follow these steps:
 
-* Identify a new function from `gcits.hf` (see the list below);
+* Identify a new function from `gcits.hf` (pick from the list below);
 * Add it to `__init__` with the appropriate name, arguments, and return type;
 * Add a wrapper function to GciLibrary to provide a Python-like API; 
 * Add a test to show that it works; and, finally,
@@ -31,120 +31,121 @@ To add new function wrappers follow these steps:
 
 # Function List
 
-The following provides a list of all the functions defined in `gcits.hf` grouped to roughly parallel the tables in the GemBuilder for C manual. 
+The following provides a list of all the functions defined in `gcits.hf` grouped to roughly parallel the tables in the GemBuilder for C manual. Checked items have been completed. Numbered items are suggested next tasks (with priority).
 
 ### Table 7.1 Functions for Controlling Sessions and Transactions
 ```
-BoolType   GciTsAbort(GciSession sess, GciErrSType *err);
-BoolType   GciTsBegin(GciSession sess, GciErrSType *err);
-BoolType   GciTsCommit(GciSession sess, GciErrSType *err);
-char*      GciTsEncrypt(const char* password, char *outBuf, size_t outBuffSize);
-int        GciTsSessionIsRemote(GciSession sess);
-GciSession GciTsLogin(
-BoolType   GciTsForkLogin(
-BoolType   GciTsLogout(GciSession sess, GciErrSType *err);
+✓	BoolType   GciTsAbort(GciSession sess, GciErrSType *err);
+1	BoolType   GciTsBegin(GciSession sess, GciErrSType *err);
+1	BoolType   GciTsCommit(GciSession sess, GciErrSType *err);
+	char*      GciTsEncrypt(const char* password, char *outBuf, size_t outBuffSize);
+✓	int        GciTsSessionIsRemote(GciSession sess);
+✓	GciSession GciTsLogin(
+	BoolType   GciTsForkLogin(
+✓	BoolType   GciTsLogout(GciSession sess, GciErrSType *err);
 ```
 
 ### Table 7.2 Functions for Handling Errors and Interrupts and for Debugging
 ```
-int        GciTsCallInProgress(GciSession sess, GciErrSType *err);
-BoolType   GciTsClearStack(GciSession sess, OopType gsProcess, GciErrSType *err);
-OopType    GciTsContinueWith(GciSession sess,
-BoolType   GciTsForkContinueWith(GciSession sess,
-int        GciTsGemTrace(GciSession sess, int enable, GciErrSType *err);
+1	BoolType   GciTsBreak(GciSession sess, BoolType hard, GciErrSType *err);
+1	int        GciTsCallInProgress(GciSession sess, GciErrSType *err);
+	BoolType   GciTsClearStack(GciSession sess, OopType gsProcess, GciErrSType *err);
+	OopType    GciTsContinueWith(GciSession sess,
+	BoolType   GciTsForkContinueWith(GciSession sess,
+	int        GciTsGemTrace(GciSession sess, int enable, GciErrSType *err);
 ```
 
 ### Table 7.3 Functions for Managing Object Bitmaps
 ```
-BoolType   GciTsReleaseObjs(GciSession sess, OopType *buf, int count, GciErrSType *err);
-BoolType   GciTsReleaseAllObjs(GciSession sess, GciErrSType *err);
-BoolType   GciTsSaveObjs(GciSession sess, OopType *buf, int count, GciErrSType *err);
+	BoolType   GciTsReleaseObjs(GciSession sess, OopType *buf, int count, GciErrSType *err);
+	BoolType   GciTsReleaseAllObjs(GciSession sess, GciErrSType *err);
+	BoolType   GciTsSaveObjs(GciSession sess, OopType *buf, int count, GciErrSType *err);
 ```
 
 ### Table 7.4 Functions for Compiling and Executing Smalltalk Code in the Database
 ```
-OopType    GciTsCompileMethod(GciSession sess,
-BoolType   GciTsProtectMethods(GciSession sess, BoolType mode, GciErrSType *err);
-BoolType   GciTsClassRemoveAllMethods(GciSession sess, 
-OopType    GciTsExecute(GciSession sess,
-BoolType   GciTsForkExecute(GciSession sess,
-OopType    GciTsExecute_(GciSession sess,
-ssize_t    GciTsExecuteFetchBytes(GciSession sess,
-OopType    GciTsPerform(GciSession sess,
-BoolType   GciTsForkPerform(GciSession sess,
-ssize_t    GciTsPerformFetchBytes(GciSession sess,
+	OopType    GciTsCompileMethod(GciSession sess,
+	BoolType   GciTsProtectMethods(GciSession sess, BoolType mode, GciErrSType *err);
+	BoolType   GciTsClassRemoveAllMethods(GciSession sess, 
+3	OopType    GciTsExecute(GciSession sess,
+	BoolType   GciTsForkExecute(GciSession sess,
+	OopType    GciTsExecute_(GciSession sess,
+3	ssize_t    GciTsExecuteFetchBytes(GciSession sess,
+3	OopType    GciTsPerform(GciSession sess,
+	BoolType   GciTsForkPerform(GciSession sess,
+3	ssize_t    GciTsPerformFetchBytes(GciSession sess,
 ```
 
 ### Table 7.5 Functions for Accessing Symbol Dictionaries
 ```
-OopType    GciTsResolveSymbol(GciSession sess, 
-OopType    GciTsResolveSymbolObj(GciSession sess, 
+2	OopType    GciTsResolveSymbol(GciSession sess, 
+	OopType    GciTsResolveSymbolObj(GciSession sess, 
 ```
 
 ### Table 7.6 Functions for creating and Initializing Objects
 ```
-int        GciTsGetFreeOops(GciSession sess, OopType *buf, int numOopsRequested, GciErrSType *err);
-OopType    GciTsNewObj(GciSession sess, OopType aClass, GciErrSType *err);
-OopType    GciTsNewByteArray(GciSession sess, 
-OopType    GciTsNewString_(GciSession sess, 
-OopType    GciTsNewString(GciSession sess, 
-OopType    GciTsNewSymbol(GciSession sess, 
-OopType    GciTsNewUnicodeString_(GciSession s,
-OopType    GciTsNewUnicodeString(GciSession sess, 
-OopType    GciTsNewUtf8String(GciSession sess, 
-OopType    GciTsNewUtf8String_(GciSession sess, 
-int64      GciTsFetchUnicode(GciSession sess,
-int64      GciTsFetchUtf8(GciSession sess,
+	int        GciTsGetFreeOops(GciSession sess, OopType *buf, int numOopsRequested, GciErrSType *err);
+	OopType    GciTsNewObj(GciSession sess, OopType aClass, GciErrSType *err);
+	OopType    GciTsNewByteArray(GciSession sess, 
+	OopType    GciTsNewString_(GciSession sess, 
+	OopType    GciTsNewString(GciSession sess, 
+	OopType    GciTsNewSymbol(GciSession sess, 
+	OopType    GciTsNewUnicodeString_(GciSession s,
+	OopType    GciTsNewUnicodeString(GciSession sess, 
+	OopType    GciTsNewUtf8String(GciSession sess, 
+	OopType    GciTsNewUtf8String_(GciSession sess, 
+	int64      GciTsFetchUnicode(GciSession sess,
+	int64      GciTsFetchUtf8(GciSession sess,
 ```
 
 ### Table 7.7 Functions for Converting Objects and Values
 ```
-BoolType   GciTsOopIsSpecial(OopType oop);
-OopType    GciTsFetchSpecialClass(OopType oop);
-int        GciTsOopToChar(OopType oop);
-OopType    GciTsCharToOop(uint ch);
-OopType    GciTsDoubleToSmallDouble(double aFloat);
-BoolType   GciUtf8To8bit(const char* src, char *dest, ssize_t destSize);
-ssize_t    GciNextUtf8Character(const char* src, size_t len, uint *chOut);
-OopType    GciI32ToOop(int arg);
-OopType    GciTsDoubleToOop(GciSession sess, double aDouble, GciErrSType *err);
-BoolType   GciTsOopToDouble(GciSession sess, OopType oop,
-OopType    GciTsI64ToOop(GciSession sess, int64 arg, GciErrSType *err);
-BoolType   GciTsOopToI64(GciSession sess, OopType oop, int64 *result, GciErrSType *err);
+✓	BoolType   GciTsOopIsSpecial(OopType oop);
+2	OopType    GciTsFetchSpecialClass(OopType oop);
+✓	int        GciTsOopToChar(OopType oop);
+✓	OopType    GciTsCharToOop(uint ch);
+✓	OopType    GciTsDoubleToSmallDouble(double aFloat);
+	BoolType   GciUtf8To8bit(const char* src, char *dest, ssize_t destSize);
+	ssize_t    GciNextUtf8Character(const char* src, size_t len, uint *chOut);
+✓	OopType    GciI32ToOop(int arg);
+	OopType    GciTsDoubleToOop(GciSession sess, double aDouble, GciErrSType *err);
+	BoolType   GciTsOopToDouble(GciSession sess, OopType oop,
+	OopType    GciTsI64ToOop(GciSession sess, int64 arg, GciErrSType *err);
+	BoolType   GciTsOopToI64(GciSession sess, OopType oop, int64 *result, GciErrSType *err);
 ```
 
 ### Table 7.8 Object Traversal and Path Functions
 ```
-int        GciTsStoreTravDoTravRefs(GciSession sess,
-BoolType   GciTsForkStoreTravDoTravRefs(GciSession sess,
-int        GciTsFetchTraversal(GciSession sess, 
-BoolType   GciTsStoreTrav(GciSession sess, 
-int        GciTsMoreTraversal(GciSession sess,
+	int        GciTsStoreTravDoTravRefs(GciSession sess,
+	BoolType   GciTsForkStoreTravDoTravRefs(GciSession sess,
+	int        GciTsFetchTraversal(GciSession sess, 
+	BoolType   GciTsStoreTrav(GciSession sess, 
+	int        GciTsMoreTraversal(GciSession sess,
 ```
 
 ### Table 7.9 Structural Access Functions
 ```
-int64      GciTsFetchBytes(GciSession sess,
-int64      GciTsFetchChars(GciSession sess,
-int64      GciTsFetchUtf8Bytes(GciSession sess,
-BoolType   GciTsStoreBytes(GciSession sess,
-int        GciTsFetchOops(GciSession sess,
-BoolType   GciTsStoreOops(GciSession sess,
-int        GciTsRemoveOopsFromNsc(GciSession sess, 
-int64      GciTsFetchObjInfo(GciSession sess, OopType objId, 
-int64      GciTsFetchSize(GciSession sess, OopType obj, GciErrSType *err);
-int64      GciTsFetchVaryingSize(GciSession sess, OopType obj, GciErrSType *err);
-OopType    GciTsFetchClass(GciSession sess, OopType obj, GciErrSType *err);
-int        GciTsIsKindOf(GciSession sess, 
-int        GciTsIsSubclassOf(GciSession sess, 
-int        GciTsIsKindOfClass(GciSession sess, 
-int        GciTsIsSubclassOfClass(GciSession sess, 
-BoolType   GciTsObjExists(GciSession sess, OopType obj);
+	int64      GciTsFetchBytes(GciSession sess,
+	int64      GciTsFetchChars(GciSession sess,
+	int64      GciTsFetchUtf8Bytes(GciSession sess,
+	BoolType   GciTsStoreBytes(GciSession sess,
+	int        GciTsFetchOops(GciSession sess,
+	BoolType   GciTsStoreOops(GciSession sess,
+	int        GciTsRemoveOopsFromNsc(GciSession sess, 
+	int64      GciTsFetchObjInfo(GciSession sess, OopType objId, 
+2	int64      GciTsFetchSize(GciSession sess, OopType obj, GciErrSType *err);
+2	int64      GciTsFetchVaryingSize(GciSession sess, OopType obj, GciErrSType *err);
+2	OopType    GciTsFetchClass(GciSession sess, OopType obj, GciErrSType *err);
+2	int        GciTsIsKindOf(GciSession sess, 
+2	int        GciTsIsSubclassOf(GciSession sess, 
+2	int        GciTsIsKindOfClass(GciSession sess, 
+	int        GciTsIsSubclassOfClass(GciSession sess, 
+2	BoolType   GciTsObjExists(GciSession sess, OopType obj);
 ```
 
 ### Table 7.10 Utility Functions
 ```
-uint       GciTsVersion(char *buf, size_t bufSize);
-int        GciTsWaitForEvent(GciSession sess, int latencyMs,
-BoolType   GciTsCancelWaitForEvent(GciSession sess, GciErrSType *err);
+✓	uint       GciTsVersion(char *buf, size_t bufSize);
+	int        GciTsWaitForEvent(GciSession sess, int latencyMs,
+	BoolType   GciTsCancelWaitForEvent(GciSession sess, GciErrSType *err);
 ```

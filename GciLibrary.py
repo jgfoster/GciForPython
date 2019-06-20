@@ -19,6 +19,14 @@ class GciLibrary:
         self.gciTsAbort.restype = c_bool
         self.gciTsAbort.argtypes = [GciSession, POINTER(GciErrSType)]
         
+        self.gciTsBegin = self.library.GciTsBegin
+        self.gciTsBegin.restype = c_bool
+        self.gciTsBegin.argtypes = [GciSession, POINTER(GciErrSType)]
+        
+        self.gciTsCommit = self.library.GciTsCommit
+        self.gciTsCommit.restype = c_bool
+        self.gciTsCommit.argtypes = [GciSession, POINTER(GciErrSType)]
+
         self.gciTsCharToOop = self.library.GciTsCharToOop
         self.gciTsCharToOop.restype = OopType
         self.gciTsCharToOop.argtypes = [c_uint]
@@ -87,6 +95,18 @@ class GciLibrary:
     def abort(self, session) -> None:
         error = GciErrSType()
         if not self.gciTsAbort(session, byref(error)):
+            raise GciException(error)
+        return None
+
+    def begin(self, session) -> None:
+        error = GciErrSType()
+        if not self.gciTsBegin(session, byref(error)):
+            raise GciException(error)
+        return None
+        
+    def commit(self, session) -> None:
+        error = GciErrSType()
+        if not self.gciTsCommit(session, byref(error)):
             raise GciException(error)
         return None
 
