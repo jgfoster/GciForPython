@@ -72,6 +72,20 @@ True
 >>> gci.is_session_valid(session)
 True
 
+>>> symbolName = 'Globals'
+>>> try:
+...     gci.resolveSymbol(session, symbolName)
+... except GciException as ex:
+...     ex.number()
+207361
+
+>>> object = 7
+>>> try:
+...     gci.resolveSymbolObj(session, object)
+... except GciException as ex:
+...     ex.number()
+2101
+
 >>> try:
 ...     gci.abort(session)
 ... except GciException as ex:
