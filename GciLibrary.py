@@ -60,7 +60,15 @@ class GciLibrary:
         self.gciTsOopToChar = self.library.GciTsOopToChar
         self.gciTsOopToChar.restype = c_int
         self.gciTsOopToChar.argtypes = [OopType]
-        
+
+        self.gciTsResolveSymbol = self.library.GciTsResolveSymbol
+        self.gciTsResolveSymbol.restype = OopType
+        self.gciTsResolveSymbol.argtypes = [GciSession, c_char_p, OopType, POINTER(GciErrSType)]
+
+        self.gciTsResolveSymbolObj = self.library.GciTsResolveSymbolObj
+        self.gciTsResolveSymbolObj.restype = OopType
+        self.gciTsResolveSymbolObj.argtypes = [GciSession, OopType, OopType, POINTER(GciErrSType)]
+
         self.gciTsSessionIsRemote = self.library.GciTsSessionIsRemote
         self.gciTsSessionIsRemote.restype = c_int
         self.gciTsSessionIsRemote.argtypes = [GciSession]
@@ -170,7 +178,21 @@ class GciLibrary:
         result = self.gciTsOopToChar(oop)
         # should check for -1
         return result
-    
+
+    def resolveSymbol(self, session, symbolName) -> OopType:
+        error = GciErrSType()
+        result = self.gciTsResolveSymbol(session, symbolName.encode('ascii'), OOP_NIL, byref(error))
+        if result == OOP_ILLEGAL:
+            raise GciException(error)
+        return result
+
+    def resolveSymbolObj(self, session, symbolName) -> OopType:
+        error = GciErrSType()
+        result = self.gciTsResolveSymbolObj(session, symbolName, OOP_NIL, byref(error))
+        if result == OOP_ILLEGAL:
+            raise GciException(error)
+        return result
+        
     def version(self) -> str:
         buf = create_string_buffer(256)
         code = self.gciTsVersion(buf, sizeof(buf))

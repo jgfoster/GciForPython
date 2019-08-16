@@ -12,6 +12,7 @@ GCI_ERR_STR_SIZE = 1024
 GCI_ERR_reasonSize = GCI_ERR_STR_SIZE
 GCI_MAX_ERR_ARGS = 10
 OOP_ILLEGAL = 1
+OOP_NIL = 20
 
 class GciErrSType(Structure):
     """
