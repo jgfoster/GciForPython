@@ -8,8 +8,9 @@ from GciClasses import *
 
 class GciLibrary:
 
-    def __init__(self, version='3.4.3', directory=os.getcwd()):
-        self._initLibrary(version, directory)
+    def __init__(self, version='3.5.0'):
+        os.environ["GEMSTONE"] = os.getcwd()
+        self._initLibrary(version, os.getcwd() + '/lib/')
 
         self.gciI32ToOop = self.library.GciI32ToOop
         self.gciI32ToOop.restype = c_int32
